@@ -1,0 +1,54 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: queue-worker
+# spec:
+#   replicas: 1  # KEDA will autoscale this
+#   selector:
+#     matchLabels:
+#       app: queue-worker
+#   template:
+#     metadata:
+#       labels:
+#         app: queue-worker
+#     spec:
+#       containers:
+#         - name: worker
+#           image: kedareistry.azurecr.io/queue-worker:latest
+#           env:
+#             - name: AZURE_STORAGE_CONNECTION_STRING
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: azure-storage-secret
+#                   key: connectionString
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-worker
+spec:
+  # This initial replica count will be controlled by KEDA or HPA once they are active.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: queue-worker
+  template:
+    metadata:
+      labels:
+        app: queue-worker
+    spec:
+      containers:
+        - name: worker
+          image: kedareistry.azurecr.io/queue-worker:latest
+          env:
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: azure-storage-secret
+                  key: connectionString
+          resources:
+            requests:
+              cpu: "250m"      # Request 0.1 of a CPU core
+              memory: "128Mi"  # Example memory request
+            limits:
+              cpu: "500m"      # Allow the pod to use up to 0.5 of a CPU core
+              memory: "256Mi"

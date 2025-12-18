@@ -1,0 +1,17 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: queue-scaler
+spec:
+  scaleTargetRef:
+    name: queue-worker  # Must match the deployment name
+  minReplicaCount: 0
+  maxReplicaCount: 10
+  # maxReplicaCount: 1
+  triggers:
+    - type: azure-queue
+      metadata:
+        queueName: hieuduc231  
+        connectionFromEnv: AZURE_STORAGE_CONNECTION_STRING  # This matches the secret you created
+        queueLength: '5'  # Scale when >5 messages in the queue
+        # queueLength: '999999'
