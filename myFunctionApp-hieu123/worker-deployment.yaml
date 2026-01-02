@@ -47,7 +47,7 @@ spec:
                   key: connectionString
           resources:
             requests:
-              cpu: "250m"      # Request 0.1 of a CPU core
+              cpu: "250m"      # Request 0.25 of a CPU core
               memory: "128Mi"  # Example memory request
             limits:
               cpu: "500m"      # Allow the pod to use up to 0.5 of a CPU core
