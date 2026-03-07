@@ -1,17 +1,46 @@
+# apiVersion: keda.sh/v1alpha1
+# kind: ScaledObject
+# metadata:
+#   name: queue-scaler
+# spec:
+#   scaleTargetRef:
+#     name: queue-worker  # Must match the deployment name
+#   minReplicaCount: 0
+#   maxReplicaCount: 20
+#   triggers:
+#     - type: azure-queue
+#       metadata:
+#         queueName: hieuduc231  
+#         connectionFromEnv: AZURE_STORAGE_CONNECTION_STRING  # This matches the secret you created
+#         queueLength: '10'  # Scale when >n messages in the queue
+#         # queueLength: '999999'
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: queue-scaler
 spec:
   scaleTargetRef:
-    name: queue-worker  # Must match the deployment name
+    name: queue-worker
   minReplicaCount: 0
-  maxReplicaCount: 30
-  # maxReplicaCount: 1
+  maxReplicaCount: 20
+  
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          policies:
+          - type: Percent
+            value: 1000  # Allow scaling up by 1000% at once
+            periodSeconds: 15
+          - type: Pods
+            value: 20   
+            periodSeconds: 15
+          selectPolicy: Max
+
   triggers:
     - type: azure-queue
       metadata:
         queueName: hieuduc231  
-        connectionFromEnv: AZURE_STORAGE_CONNECTION_STRING  # This matches the secret you created
-        queueLength: '20'  # Scale when >5 messages in the queue
-        # queueLength: '999999'
+        connectionFromEnv: AZURE_STORAGE_CONNECTION_STRING
+        queueLength: '10'
