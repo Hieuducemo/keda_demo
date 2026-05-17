@@ -52,8 +52,8 @@ func azure functionapp publish <function-app-name>
 Build and Push to ACR
 Dockerfile and worker.py are visible in the project 
 ```bash
-docker build -t container-registry.azurecr.io/queue-worker:latest
-docker push container-registry.azurecr.io/queue-worker:latest 
+docker build -t container-registry.azurecr.io/queue-worker:latest.
+docker push container-registry.azurecr.io/queue-worker:latest.
 ``` 
 
 #### Helm
@@ -119,7 +119,7 @@ kubectl create secret generic azure-storage-secret \
 
 To apply the worker, deployment run:
 ```bash
-kubectl -f apply <rule.yaml>
+kubectl apply -f <rule.yaml>
 ```
 for example: kubectl -f apply worker-deployment.yaml
 
